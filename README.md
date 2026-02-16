@@ -32,10 +32,8 @@
 - [Training](#training)
 - [Testing](#testing)
 - [Web UI for Testing](#web-ui-for-testing)
-- [Docker Deployment](#docker-deployment)
 - [Performance](#performance)
 - [Documentation](#documentation)
-- [Deliverables Checklist](#deliverables-checklist)
 
 ---
 
@@ -169,92 +167,24 @@ The CLIP model files are **not included** in the repository due to size (335 MB)
    └── rust_clip.onnx.data      # CLIP model weights (335 MB)
    ```
 
-3. **Set the environment variable and restart:**
-   ```powershell
-   $env:RUST_MODEL_TYPE="clip"
-   uvicorn app.main:app --host 0.0.0.0 --port 8000
-   ```
-
 > **Note**: CLIP is provided for research comparison only. MobileNetV3 outperforms CLIP on our test set (100% vs 70% accuracy) and is 10x smaller.
 
 ---
 
-##  Project Structure
+## Project Structure
 
-```
-oxmaint-predictive-agent/
-│
-├── app/
-│   ├── main.py                     # FastAPI app entrypoint
-│   ├── schemas.py                  # Pydantic request/response schemas
-│   └── modalities/
-│       ├── sensor.py               # Sensor inference + feature extraction
-│       ├── image.py                # ONNX rust detection
-│       └── environmental.py        # Environmental risk scoring
-│
-├── artifacts/                      # Trained model artifacts
-│   ├── pump_failure_lgbm.joblib    # Failure classification model
-│   ├── pump_ttb_lgbm.joblib        # Time-to-breakdown regression
-│   ├── rust_model.onnx             # Rust detection - MobileNetV3 (default)
-│   ├── rust_model.onnx.data        # ONNX model data file
-│   ├── rust_clip.onnx              # Rust detection - CLIP (optional)
-│   ├── rust_labels.json            # Image model labels (shared)
-│   ├── feature_schema.json         # Sensor feature names
-│   └── train_metrics.json          # Training performance metrics
-│
-├── tests/                          # All test-related resources
-│   ├── api/                        # Automated test suite
-│   │   ├── conftest.py             # Pytest configuration
-│   │   └── test_api.py             # API endpoint tests (22 tests)
-│   ├── images/                     # Test images
-│   │   ├── rust/                   # Rust detection test images
-│   │   └── no_rust/                # Clean surface test images
-│   └── scripts/                    # Testing utilities
-│       ├── make_demo_batch.py      # Batch request generator
-│       ├── load_test.py            # Performance load testing
-│       ├── test_environmental.ps1  # Environmental modality tests
-│       └── test_multimodal_complete.ps1 # Full 3-modality tests
-│
-├── train/
-│   └── train_pump_lgbm.py          # LightGBM training script
-│
-├── Rust_Detection_Notebook/        # Rust detection model training notebooks
-│   ├── MODEL_TRAINING_GUIDE.md     # Complete training documentation
-│   ├── VLM_rust_detection_training.ipynb  # CLIP model training (Colab)
-│   ├── rust_detection_model_training.ipynb # MobileNetV3 training (Colab)
-│   └── What we did in Colab.pdf    # Training process screenshots
-│
-├── ui/                             # Web-based testing interface
-│   ├── ui.html                     # Test UI (HTML+CSS+JS)
-│   ├── serve_ui.py                 # Simple HTTP server with CORS
-│   └── README.md                   # UI documentation
-│
-├── docker/
-│   └── Dockerfile                  # Docker configuration
-│
-├── docs/
-│   ├── ENVIRONMENTAL_MODALITY.md   # Environmental modality documentation
-│   └── CLOUD_DEPLOYMENT_GUIDE.md   # Production deployment guide
-│
-├── data/                           # Datasets and data documentation
-│   ├── sensor.csv                  # Pump sensor time series data
-│   └── DATASET_MANIFEST.md         # Data sources, licenses, quality checks
-│
-├── samples/                        # Example API requests
-│   ├── request.json                # Single prediction
-│   ├── batch.json                  # Batch prediction
-│   ├── env_critical.json           # Critical environmental conditions
-│   └── env_favorable.json          # Favorable operating conditions
-│
-├── requirements.txt                # Python dependencies
-├── .gitignore                      # Git ignore patterns
-├── README.md                       # This file
-├── AI_USAGE.md                     # GenAI usage documentation
-├── OPTIMIZATION_STUDY.md           # Task 8 optimization analysis
-├── ARCHITECTURE.md                 # System architecture + diagrams
-├── EVALUATION_REPORT.md            # Metrics, ablation, error analysis
-└── FINAL_SUBMISSION_CHECKLIST.md   # Pre-submission verification
-```
+| Folder | Purpose |
+|--------|---------|
+| `app/` | FastAPI application + modalities (sensor, image, environmental) |
+| `artifacts/` | Trained models (LightGBM, ONNX rust detection) |
+| `tests/` | Pytest suite (22 tests), test images, testing scripts |
+| `train/` | LightGBM training script |
+| `Rust_Detection_Notebook/` | Colab notebooks for rust model training |
+| `ui/` | Web-based testing interface |
+| `docker/` | Dockerfile for containerization |
+| `docs/` | Additional documentation |
+| `data/` | Dataset and manifest |
+| `samples/` | Example API request payloads |
 
 ---
 
@@ -385,85 +315,17 @@ python train\train_pump_lgbm.py
 ```powershell
 # Run all 22 automated tests
 pytest tests/api/test_api.py -v
-
-# Run specific test class
-pytest tests/api/test_api.py::TestPredictEndpoint -v
-
-# Run with coverage (if installed)
-pytest tests/api/test_api.py --cov=app --cov-report=html
 ```
 
-**Test Categories:**
-- `TestHealthEndpoint`: Health check endpoint validation (3 tests)
-- `TestPredictEndpoint`: Single prediction functionality (8 tests)
-- `TestInputValidation`: Schema validation and error handling (5 tests)
-- `TestBatchEndpoint`: Batch prediction functionality (4 tests)
-- `TestFeatureExtraction`: Sensor feature handling (2 tests)
+### Manual Testing Scripts
 
-### Test Sensor-Only
+| Test | Command/Script |
+|------|----------------|
+| Sensor-only | `Invoke-RestMethod -Uri "http://localhost:8000/predict" -Method Post -ContentType "application/json" -Body (Get-Content .\samples\request.json -Raw)` |
+| Environmental | `.\tests\scripts\test_environmental.ps1` |
+| Full Multimodal | `.\tests\scripts\test_multimodal_complete.ps1` |
 
-```powershell
-$body = Get-Content .\samples\request.json -Raw
-Invoke-RestMethod -Uri "http://localhost:8000/predict" `
-  -Method Post -ContentType "application/json" -Body $body | ConvertTo-Json -Depth 10
-```
-
-### Test Image Modality
-
-**Note**: These tests use **MobileNetV3** by default. To test with CLIP, set `$env:RUST_MODEL_TYPE="clip"` before starting the API.
-
-```powershell
-# Test all rust/no_rust images (uses MobileNetV3 by default)
-$base = "C:\oxmaint-predictive-agent\tests\images"
-$endpoint = "http://localhost:8000/predict"
-
-# Load sensor window once
-$req = Get-Content ".\samples\request.json" -Raw | ConvertFrom-Json
-
-function Invoke-ImagePredict($imgPath, $assetId) {
-  $b64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($imgPath))
-  $bodyObj = @{
-    asset_id = $assetId
-    timestamp = (Get-Date).ToString("o")
-    sensor_window = $req.sensor_window
-    image_base64 = $b64
-  }
-  $body = $bodyObj | ConvertTo-Json -Depth 50
-  Invoke-RestMethod -Uri $endpoint -Method Post -ContentType "application/json" -Body $body
-}
-
-# Test rust images
-Write-Host "=== Testing RUST images ==="
-Get-ChildItem "$base\rust" -Filter *.jpg | ForEach-Object {
-  $resp = Invoke-ImagePredict $_.FullName "rust_$($_.BaseName)"
-  $resp | ConvertTo-Json -Depth 10
-}
-
-# Test no_rust (clean) images
-Write-Host "=== Testing NO_RUST images ==="
-Get-ChildItem "$base\no_rust" | ForEach-Object {
-  $resp = Invoke-ImagePredict $_.FullName "clean_$($_.BaseName)"
-  $resp | ConvertTo-Json -Depth 10
-}
-```
-
-### Test Environmental Modality
-
-```powershell
-# Test environmental risk scenarios
-.\tests\scripts\test_environmental.ps1
-
-# Or test individual scenarios
-$body = Get-Content .\samples\env_critical.json -Raw
-Invoke-RestMethod -Uri "http://localhost:8000/predict" `
-  -Method Post -ContentType "application/json" -Body $body | ConvertTo-Json -Depth 10
-```
-
-### Test Full Multimodal (Sensor + Image + Environmental)
-
-```powershell
-.\tests\scripts\test_multimodal_complete.ps1
-```
+Test images are located in `tests/images/rust/` and `tests/images/no_rust/`.
 
 ---
 
@@ -511,84 +373,12 @@ python serve_ui.py
 
 ---
 
-## 🐳 Docker Deployment
-
-### Build Image
-
-```powershell
-docker build -t oxmaint-api -f docker\Dockerfile .
-```
-
-### Run Container
-
-```powershell
-docker run --rm -p 8000:8000 --name oxmaint-api oxmaint-api
-```
-
-### Test Dockerized API
-
-```powershell
-# Health check
-Invoke-RestMethod "http://localhost:8000/health" | ConvertTo-Json -Depth 10
-
-# Verify artifacts loaded
-docker exec -it oxmaint-api ls -lah /app/artifacts
-
-# Test prediction (see testing section above)
-```
-
-### Docker Verification Results
-
-| Test | Result | Details |
-|------|--------|---------|
-| Health | ✅ | `status: ok`, all models loaded |
-| Sensor-only | ✅ | ~21ms, low risk predicted |
-| Environmental (critical) | ✅ | ~11ms, `environmental_stress` fault |
-| Image (rust) | ✅ | ~45ms, `corrosion_rust` fault, ~99.5% confidence |
-| Image (clean) | ✅ | ~70ms, `no_rust`, no fault triggered (below threshold) |
-| Batch (3 assets) | ✅ | ~34ms total, all predictions correct |
-
-### What Docker Does
-
-- **Packages**: API code, model artifacts, dependencies into portable image
-- **Installs**: Python dependencies, Linux libraries (libgomp1 for LightGBM)
-- **Exposes**: Port 8000 for API access
-- **Starts**: Uvicorn server with 4 workers (multi-process)
-
----
-
 ## ⚡ Performance
 
-### Load Test Results
+**Final Performance (Load Test, 200 requests, concurrency=10):**
+- Throughput: **94.6 req/s** | P50 Latency: **88.3 ms** | P95 Latency: **213.1 ms** | Error Rate: **0%**
 
-**Methodology**: Locust load testing at 10-50-200 request levels, concurrency=10
-
-| Optimization Stage | Throughput (req/s) | P50 Latency | P95 Latency |
-|--------------------|-------------------|-------------|-------------|
-| **Baseline** (single worker, pandas) | 11 | 850 ms | 960 ms |
-| **Multi-worker** (4 workers) | 42 | 220 ms | 280 ms |
-| **NumPy features** | 101 | 89 ms | 147 ms |
-
-**Final Performance** (200 requests):
-- Throughput: **94.6 req/s**
-- P50 Latency: **88.3 ms**
-- P95 Latency: **213.1 ms**
-- Error Rate: **0%**
-
-### Bottleneck Analysis
-
-| Component | Latency (ms) | % of Total |
-|-----------|--------------|------------|
-| ONNX image inference | 42 | 52% |
-| Sensor feature extraction | 7 | 9% |
-| LightGBM inference | 6 | 8% |
-| Base64 decode | 8 | 10% |
-| Image preprocessing | 13 | 15% |
-| Environmental logic | <1 | <1% |
-| Fusion + serialization | 4 | 5% |
-
-**Current Bottleneck**: ONNX image inference (42ms)  
-**Mitigation**: GPU acceleration (5-10x faster) or INT8 quantization (2-3x faster)
+**Bottleneck**: ONNX image inference (42ms, 52% of total). Mitigate with GPU acceleration or INT8 quantization.
 
 See [OPTIMIZATION_STUDY.md](OPTIMIZATION_STUDY.md) for detailed analysis.
 
@@ -596,92 +386,23 @@ See [OPTIMIZATION_STUDY.md](OPTIMIZATION_STUDY.md) for detailed analysis.
 
 ## 📚 Documentation
 
-### 🎯 Start Here
+**Essential:**
+- [QUICK_START.md](QUICK_START.md) - Setup guide (5 min)
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System design + diagrams
+- [EVALUATION_REPORT.md](EVALUATION_REPORT.md) - Model metrics + ablation studies
 
-| Document | Purpose | When to Read |
-|----------|---------|-------------|
-| **[README.md](README.md)** | Project overview and features | You are here! Read first |
-| **[QUICK_START.md](QUICK_START.md)** | Step-by-step setup guide | Getting started (5 min) |
+**Technical:**
+- [AI_USAGE.md](AI_USAGE.md) - GenAI usage disclosure
+- [OPTIMIZATION_STUDY.md](OPTIMIZATION_STUDY.md) - Performance analysis
+- [data/DATASET_MANIFEST.md](data/DATASET_MANIFEST.md) - Dataset sources + licenses
 
-### 📖 Core Documentation
+**Specialized:**
+- [docs/VLM_EVALUATION.md](docs/VLM_EVALUATION.md) - MobileNetV3 vs CLIP comparison
+- [docs/ENVIRONMENTAL_MODALITY.md](docs/ENVIRONMENTAL_MODALITY.md) - Environmental risk logic
+- [docs/CLOUD_DEPLOYMENT_GUIDE.md](docs/CLOUD_DEPLOYMENT_GUIDE.md) - Production deployment
+- [Rust_Detection_Notebook/MODEL_TRAINING_GUIDE.md](Rust_Detection_Notebook/MODEL_TRAINING_GUIDE.md) - Model training guide
+- [ui/README.md](ui/README.md) - Web UI guide 
 
-| Document | Purpose |
-|----------|---------|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System design, data flow, and architecture diagrams |
-| [EVALUATION_REPORT.md](EVALUATION_REPORT.md) | Model performance metrics and ablation studies |
-| [docs/VLM_EVALUATION.md](docs/VLM_EVALUATION.md) | Vision-language model comparison (MobileNetV3 vs CLIP) |
-
-### 🔧 Technical References
-
-| Document | Purpose |
-|----------|---------|
-| [AI_USAGE.md](AI_USAGE.md) | GenAI usage disclosure (required for submission) |
-| [DATASET_MANIFEST.md](data/DATASET_MANIFEST.md) | Data sources, licenses, and quality checks |
-| [OPTIMIZATION_STUDY.md](OPTIMIZATION_STUDY.md) | Performance optimization and bottleneck analysis |
-
-### 📂 Specialized Guides
-
-| Document | Purpose |
-|----------|---------|
-| [docs/ENVIRONMENTAL_MODALITY.md](docs/ENVIRONMENTAL_MODALITY.md) | Environmental risk scoring logic |
-| [docs/CLOUD_DEPLOYMENT_GUIDE.md](docs/CLOUD_DEPLOYMENT_GUIDE.md) | Production deployment (AWS/GCP/Azure) |
-| [Rust_Detection_Notebook/MODEL_TRAINING_GUIDE.md](Rust_Detection_Notebook/MODEL_TRAINING_GUIDE.md) | Complete guide for training MobileNetV3 and CLIP models |
-| [ui/README.md](ui/README.md) | Web UI testing interface guide |
-
----
-
-## ✅ Deliverables Checklist
-
-### Task 1: Data Pipeline ✅
-- [x] Ingestion scripts for sensor, image, environmental data
-- [x] Unified schema keyed by `asset_id` and `timestamp`
-- [x] Data quality checks (see `app/schemas.py` Pydantic validation)
-- [x] Dataset manifest (see `EVALUATION_REPORT.md` section 1)
-
-### Task 2: Preprocessing ✅
-- [x] Sensor: windowing, scaling, derived features (NumPy-based)
-- [x] Image: base64 decode, resize, normalize for ONNX
-- [x] Environmental: structured context parsing
-
-### Task 3: Modeling ✅
-- [x] Sensor-only baseline (LightGBM, AUC 0.998)
-- [x] Multimodal model (sensor + image + environmental)
-- [x] Fusion logic combining modality outputs
-- [x] Graceful handling of missing modalities
-
-### Task 4: Agent Orchestration ✅
-- [x] Inference orchestrator routing inputs to models
-- [x] Structured output with confidence signals
-- [x] Machine-generated explanations (`top_signals`)
-
-### Task 5: API Service ✅
-- [x] `POST /predict`, `POST /predict/batch`, `GET /health`
-- [x] Schema validation (Pydantic)
-- [x] Error handling with clear messages
-- [x] Inference time tracking per request
-
-### Task 6: Deployment ✅
-- [x] Docker containerization
-- [x] One-command local startup
-- [x] Deployment instructions (see above + `OPTIMIZATION_STUDY.md`)
-
-### Task 7: Scale and Performance ✅
-- [x] Load tests at 3 traffic levels (10/50/200 requests)
-- [x] Throughput, p50/p95 latency metrics
-- [x] Bottleneck identification (ONNX inference)
-- [x] Optimization implemented (NumPy features, multi-worker)
-
-### Task 8: Optimization Study ✅
-- [x] Fine-tuning evaluation (see `OPTIMIZATION_STUDY.md` Q1)
-- [x] Structured reasoning/ensemble analysis (Q2)
-- [x] Deployment approach recommendation (Q3)
-- [x] Database connection analysis (Q4)
-- [x] Latency bottleneck mitigation (Q5)
-
-### Task 9: Generative AI Usage ✅
-- [x] AI-assisted code generation (70-80% of initial code)
-- [x] Verification methods documented (`AI_USAGE.md`)
-- [x] Transparency about AI contribution
 
 ---
 
@@ -692,15 +413,5 @@ See [OPTIMIZATION_STUDY.md](OPTIMIZATION_STUDY.md) for detailed analysis.
    - **Training**: [Roboflow Rust Detection Dataset](https://universe.roboflow.com/test-stage/rust-detection-t8vza/dataset/8)
    - **Testing**: Manual photos of rust/no-rust pumps (`tests/images/`)
 3. **Environmental Data**: Synthetic (rule-based generation for testing)
-
----
-
-## 🚦 Next Steps for Production
-
-1. **Deploy to Cloud**: AWS ECS Fargate or GCP Cloud Run (see `OPTIMIZATION_STUDY.md`)
-2. **Add Prediction Logging**: TimescaleDB for model monitoring
-3. **Collect Ground Truth**: Label actual failures for model retraining
-4. **Model Fine-Tuning**: Hyperparameter optimization, add frequency-domain features
-5. **GPU Acceleration**: Enable CUDA for ONNX inference (5-10x faster)
 
 ---
