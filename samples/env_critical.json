@@ -1,0 +1,19 @@
+{
+  "asset_id": "pump_high_risk",
+  "timestamp": "2026-02-14T14:30:00Z",
+  "sensor_window": [
+    {"ts":"2026-02-14T14:28:00Z","sensor_00":0.1,"sensor_01":0.2,"sensor_02":0.3},
+    {"ts":"2026-02-14T14:28:10Z","sensor_00":0.2,"sensor_01":0.1,"sensor_02":0.4},
+    {"ts":"2026-02-14T14:28:20Z","sensor_00":0.15,"sensor_01":0.25,"sensor_02":0.35},
+    {"ts":"2026-02-14T14:28:30Z","sensor_00":0.18,"sensor_01":0.22,"sensor_02":0.31},
+    {"ts":"2026-02-14T14:28:40Z","sensor_00":0.21,"sensor_01":0.19,"sensor_02":0.33}
+  ],
+  "environmental": {
+    "operating_hours": 2500,
+    "days_since_last_maintenance": 90,
+    "ambient_temperature_c": 48,
+    "ambient_humidity_percent": 88,
+    "load_factor": 0.98,
+    "maintenance_overdue": true
+  }
+}

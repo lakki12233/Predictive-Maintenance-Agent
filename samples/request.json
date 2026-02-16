@@ -1,0 +1,19 @@
+{
+  "asset_id": "pump_001",
+  "timestamp": "2026-02-12T20:00:00Z",
+  "sensor_window": [
+    {"ts":"2026-02-12T19:58:00Z","sensor_00":0.1,"sensor_01":0.2,"sensor_02":0.3},
+    {"ts":"2026-02-12T19:58:10Z","sensor_00":0.2,"sensor_01":0.1,"sensor_02":0.4},
+    {"ts":"2026-02-12T19:58:20Z","sensor_00":0.15,"sensor_01":0.25,"sensor_02":0.35},
+    {"ts":"2026-02-12T19:58:30Z","sensor_00":0.18,"sensor_01":0.22,"sensor_02":0.31},
+    {"ts":"2026-02-12T19:58:40Z","sensor_00":0.21,"sensor_01":0.19,"sensor_02":0.33}
+  ],
+  "environmental": {
+    "operating_hours": 850.5,
+    "days_since_last_maintenance": 25,
+    "ambient_temperature_c": 22.5,
+    "ambient_humidity_percent": 55,
+    "load_factor": 0.75,
+    "maintenance_overdue": false
+  }
+}

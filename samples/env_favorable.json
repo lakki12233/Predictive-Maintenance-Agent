@@ -1,0 +1,19 @@
+{
+  "asset_id": "pump_well_maintained",
+  "timestamp": "2026-02-14T14:30:00Z",
+  "sensor_window": [
+    {"ts":"2026-02-14T14:28:00Z","sensor_00":0.1,"sensor_01":0.2,"sensor_02":0.3},
+    {"ts":"2026-02-14T14:28:10Z","sensor_00":0.2,"sensor_01":0.1,"sensor_02":0.4},
+    {"ts":"2026-02-14T14:28:20Z","sensor_00":0.15,"sensor_01":0.25,"sensor_02":0.35},
+    {"ts":"2026-02-14T14:28:30Z","sensor_00":0.18,"sensor_01":0.22,"sensor_02":0.31},
+    {"ts":"2026-02-14T14:28:40Z","sensor_00":0.21,"sensor_01":0.19,"sensor_02":0.33}
+  ],
+  "environmental": {
+    "operating_hours": 450,
+    "days_since_last_maintenance": 10,
+    "ambient_temperature_c": 20,
+    "ambient_humidity_percent": 45,
+    "load_factor": 0.65,
+    "maintenance_overdue": false
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "clf_auc_mean": 0.9982420886627801,
+  "clf_ap_mean": 0.9650846863696982,
+  "clf_auc_folds_used": 4,
+  "clf_auc_folds_skipped": 1,
+  "reg_mae_hours_mean": 270.34320270474643,
+  "reg_mae_folds_used": 5,
+  "reg_mae_folds_skipped": 0,
+  "n_rows_used": 220304,
+  "n_reg_rows_used": 166425,
+  "window": 30,
+  "burnin_nonna_frac": 0.8,
+  "n_features": 306,
+  "pos_rate": 0.06574551528796573
+}

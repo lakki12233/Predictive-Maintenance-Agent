@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+train/
+tests/scripts/
+*.csv
+*.ipynb
+.git/
