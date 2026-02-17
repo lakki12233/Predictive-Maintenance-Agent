@@ -54,5 +54,8 @@ htmlcov/
 artifacts/rust_clip.onnx.data
 artifacts/rust_model_llm.onnx.data
 
+# Data files
+data/sensor.csv
+
 # OS
 Thumbs.db
