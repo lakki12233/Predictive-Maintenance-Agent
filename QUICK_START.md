@@ -224,6 +224,65 @@ Invoke-RestMethod -Uri "http://localhost:8000/predict/batch" `
     -Body $body | ConvertTo-Json -Depth 10
 ```
 
+### Test Image Modality
+
+**Note**: These tests use **MobileNetV3** by default. To test with CLIP, set `$env:RUST_MODEL_TYPE="clip"` before starting the API.
+
+```powershell
+# Test all rust/no_rust images (uses MobileNetV3 by default)
+$base = "C:\predictive-agent\tests\images"
+$endpoint = "http://localhost:8000/predict"
+
+# Load sensor window once
+$req = Get-Content ".\samples\request.json" -Raw | ConvertFrom-Json
+
+function Invoke-ImagePredict($imgPath, $assetId) {
+  $b64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($imgPath))
+  $bodyObj = @{
+    asset_id = $assetId
+    timestamp = (Get-Date).ToString("o")
+    sensor_window = $req.sensor_window
+    image_base64 = $b64
+  }
+  $body = $bodyObj | ConvertTo-Json -Depth 50
+  Invoke-RestMethod -Uri $endpoint -Method Post -ContentType "application/json" -Body $body
+}
+
+# Test rust images
+Write-Host "=== Testing RUST images ==="
+Get-ChildItem "$base\rust" -Filter *.jpg | ForEach-Object {
+  $resp = Invoke-ImagePredict $_.FullName "rust_$($_.BaseName)"
+  $resp | ConvertTo-Json -Depth 10
+}
+
+# Test no_rust (clean) images
+Write-Host "=== Testing NO_RUST images ==="
+Get-ChildItem "$base\no_rust" | ForEach-Object {
+  $resp = Invoke-ImagePredict $_.FullName "clean_$($_.BaseName)"
+  $resp | ConvertTo-Json -Depth 10
+}
+```
+
+### Test Environmental Modality
+
+```powershell
+# Test environmental risk scenarios
+.\tests\scripts\test_environmental.ps1
+
+# Or test individual scenarios
+$body = Get-Content .\samples\env_critical.json -Raw
+Invoke-RestMethod -Uri "http://localhost:8000/predict" `
+  -Method Post -ContentType "application/json" -Body $body | ConvertTo-Json -Depth 10
+```
+
+### Test Full Multimodal (Sensor + Image + Environmental)
+
+```powershell
+.\tests\scripts\test_multimodal_complete.ps1
+```
+
+---
+
 ---
 
 ## 🐛 Troubleshooting
