@@ -1,5 +1,5 @@
 """
-Unit and integration tests for the Oxmaint Predictive Agent API.
+Unit and integration tests for the Predictive Maintenance Agent API.
 
 Run with: pytest tests/test_api.py -v
 """

@@ -54,7 +54,7 @@ RUST_PFAIL_BUMP = float(os.getenv("RUST_PFAIL_BUMP", "0.25"))    # p_fail += bum
 # -----------------------------
 # App
 # -----------------------------
-app = FastAPI(title="Oxmaint Minimal Predictive Agent", version="2.2.0")
+app = FastAPI(title="Predictive Maintenance Agent API", version="2.2.0")
 
 # -----------------------------
 # CORS Middleware (allow UI access)

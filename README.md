@@ -1,4 +1,4 @@
-# Oxmaint Predictive Maintenance Agent
+# Predictive Maintenance Agent
 
 **A multimodal AI system for predicting pump failures using sensor data, image analysis, and environmental context.**
 
@@ -59,8 +59,8 @@ This system implements a production-ready predictive maintenance agent for centr
 
 ```powershell
 # Build and run
-docker build -f docker/Dockerfile -t oxmaint-api .
-docker run --rm -p 8000:8000 --name oxmaint-api oxmaint-api
+docker build -f docker/Dockerfile -t predictive-agent-api .
+docker run --rm -p 8000:8000 --name predictive-agent-api predictive-agent-api
 
 # Test it
 Invoke-RestMethod "http://localhost:8000/health"
@@ -81,7 +81,7 @@ Invoke-RestMethod "http://localhost:8000/health"
 
 ```powershell
 # Terminal 1: API
-docker run --rm -p 8000:8000 oxmaint-api
+docker run --rm -p 8000:8000 predictive-agent-api
 
 # Terminal 2: UI
 cd ui; python serve_ui.py
@@ -261,7 +261,7 @@ A web-based testing interface with 9 pre-configured test cases.
 
 ```powershell
 # Terminal 1: API
-docker run --rm -p 8000:8000 oxmaint-api
+docker run --rm -p 8000:8000 predictive-agent-api
 
 # Terminal 2: UI
 cd ui; python serve_ui.py
@@ -301,6 +301,6 @@ See [OPTIMIZATION_STUDY.md](OPTIMIZATION_STUDY.md) for detailed analysis.
 - [docs/ENVIRONMENTAL_MODALITY.md](docs/ENVIRONMENTAL_MODALITY.md) - Environmental risk logic
 - [docs/CLOUD_DEPLOYMENT_GUIDE.md](docs/CLOUD_DEPLOYMENT_GUIDE.md) - Production deployment
 - [Rust_Detection_Notebook/MODEL_TRAINING_GUIDE.md](Rust_Detection_Notebook/MODEL_TRAINING_GUIDE.md) - Model training guide
-- [ui/README.md](ui/README.md) - Web UI guide 
+- [ui/README.md](ui/README.md) - Web UI guide
 
 ---

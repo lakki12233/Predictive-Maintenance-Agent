@@ -99,7 +99,7 @@ Combines all modality outputs:
 ## Project Structure
 
 ```
-oxmaint-predictive-agent/
+predictive-agent/
 ├── app/                          # Core application
 │   ├── main.py                   # FastAPI + fusion logic
 │   ├── schemas.py                # Pydantic schemas
@@ -202,11 +202,11 @@ oxmaint-predictive-agent/
 
 ```powershell
 # Default (MobileNetV3)
-docker build -t oxmaint-api -f docker/Dockerfile .
-docker run -p 8000:8000 oxmaint-api
+docker build -t predictive-agent-api -f docker/Dockerfile .
+docker run -p 8000:8000 predictive-agent-api
 
 # With CLIP model
-docker run -p 8000:8000 -e RUST_MODEL_TYPE=clip oxmaint-api
+docker run -p 8000:8000 -e RUST_MODEL_TYPE=clip predictive-agent-api
 ```
 
 **Production recommendation**: AWS ECS or GCP Cloud Run with auto-scaling

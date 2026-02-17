@@ -1,6 +1,6 @@
-# 🎨 Oxmaint Predictive Agent - Test UI
+# 🎨 Predictive Maintenance Agent - Test UI
 
-**Simple web-based testing interface for the Oxmaint Predictive Maintenance API**
+**Simple web-based testing interface for the Predictive Maintenance API**
 
 This UI provides a visual way to test all API endpoints and multimodal capabilities without writing code.
 
@@ -31,16 +31,16 @@ Open a terminal and run:
 
 ```powershell
 # Navigate to project root
-cd C:\oxmaint-predictive-agent
+cd C:\predictive-agent
 
 # Build Docker image (if not already built)
-docker build -f docker\Dockerfile -t oxmaint-api .
+docker build -f docker\Dockerfile -t predictive-agent-api .
 
 # Start API container with MobileNetV3 (default - fast)
-docker run --rm -p 8000:8000 --name oxmaint-api oxmaint-api
+docker run --rm -p 8000:8000 --name predictive-agent-api predictive-agent-api
 
 # OR with CLIP model (better accuracy)
-docker run --rm -p 8000:8000 -e RUST_MODEL_TYPE=clip --name oxmaint-api oxmaint-api
+docker run --rm -p 8000:8000 -e RUST_MODEL_TYPE=clip --name predictive-agent-api predictive-agent-api
 
 # OR run directly with Python (no Docker)
 uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -65,7 +65,7 @@ Open a **NEW terminal** and run:
 
 ```powershell
 # Navigate to UI folder
-cd C:\oxmaint-predictive-agent\ui
+cd C:\predictive-agent\ui
 
 # Start UI server
 python serve_ui.py
@@ -74,7 +74,7 @@ python serve_ui.py
 **Expected Output:**
 ```
 🌐 Serving UI at http://localhost:8080/ui/ui.html
-📁 Directory: C:\oxmaint-predictive-agent
+📁 Directory: C:\predictive-agent
 
 ✅ Open in browser: http://localhost:8080/ui/ui.html
 ⚠️  Make sure API is running at http://localhost:8000
@@ -159,7 +159,7 @@ This test showcases why MobileNetV3 is the default production model. While CLIP 
 
 **To test CLIP model:**
 1. Stop current API server
-2. Start with CLIP: `docker run --rm -p 8000:8000 -e RUST_MODEL_TYPE=clip --name oxmaint-api oxmaint-api`
+2. Start with CLIP: `docker run --rm -p 8000:8000 -e RUST_MODEL_TYPE=clip --name predictive-agent-api predictive-agent-api`
 3. Run the VLM test case to see the false positive
 
 See [VLM_EVALUATION.md](../docs/VLM_EVALUATION.md) for full comparison and test results.
@@ -175,10 +175,10 @@ See [VLM_EVALUATION.md](../docs/VLM_EVALUATION.md) for full comparison and test 
 **Solution**:
 ```powershell
 # 1. Check if API is running
-docker ps | Select-String "oxmaint-api"
+docker ps | Select-String "predictive-agent"
 
 # 2. If not running, start it
-docker run --rm -p 8000:8000 --name oxmaint-api oxmaint-api
+docker run --rm -p 8000:8000 --name predictive-agent-api predictive-agent-api
 
 # 3. Test API directly
 Invoke-RestMethod "http://localhost:8000/health" | ConvertTo-Json
@@ -208,7 +208,7 @@ python serve_ui.py
 
 **Solution**: Run `serve_ui.py` from the `ui/` folder, not the root:
 ```powershell
-cd C:\oxmaint-predictive-agent\ui
+cd C:\predictive-agent\ui
 python serve_ui.py
 ```
 
@@ -222,9 +222,9 @@ python serve_ui.py
 1. Check API logs for actual errors
 2. Verify you're running the latest Docker image:
 ```powershell
-docker stop oxmaint-api
-docker build -t oxmaint-api -f docker\Dockerfile .
-docker run --rm -p 8000:8000 --name oxmaint-api oxmaint-api
+docker stop predictive-agent-api
+docker build -t predictive-agent-api -f docker\Dockerfile .
+docker run --rm -p 8000:8000 --name predictive-agent-api predictive-agent-api
 ```
 
 ---
@@ -305,14 +305,14 @@ allow_origins=["https://yourdomain.com"]
 
 ### Terminal 1 - API Server
 ```powershell
-cd C:\oxmaint-predictive-agent
-docker build -t oxmaint-api -f docker\Dockerfile .
-docker run --rm -p 8000:8000 --name oxmaint-api oxmaint-api
+cd C:\predictive-agent
+docker build -t predictive-agent-api -f docker\Dockerfile .
+docker run --rm -p 8000:8000 --name predictive-agent-api predictive-agent-api
 ```
 
 ### Terminal 2 - UI Server
 ```powershell
-cd C:\oxmaint-predictive-agent\ui
+cd C:\predictive-agent\ui
 python serve_ui.py
 ```
 
@@ -338,7 +338,7 @@ If you encounter issues:
 
 1. Check Docker container logs:
    ```powershell
-   docker logs oxmaint-api
+   docker logs predictive-agent-api
    ```
 
 2. Check UI server logs in the terminal running `serve_ui.py`

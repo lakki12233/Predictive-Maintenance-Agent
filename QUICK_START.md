@@ -1,6 +1,6 @@
 # 🚀 Quick Start Guide
 
-**Complete step-by-step instructions to run the Oxmaint Predictive Agent.**
+**Complete step-by-step instructions to run the Predictive Maintenance Agent.**
 
 > 💡 **New to the project?** Start here! This guide provides all commands needed to get up and running in 5 minutes.
 
@@ -20,11 +20,11 @@
 ```powershell
 # If from Git repository
 git clone <repository-url>
-cd oxmaint-predictive-agent
+cd predictive-agent
 
 # OR if from ZIP file
 # Extract ZIP, then:
-cd oxmaint-predictive-agent
+cd predictive-agent
 ```
 
 ---
@@ -33,7 +33,7 @@ cd oxmaint-predictive-agent
 
 ```powershell
 # Build the Docker image (takes 2-3 minutes first time)
-docker build -f docker\Dockerfile -t oxmaint-api .
+docker build -f docker\Dockerfile -t predictive-agent-api .
 
 # Expected output: "=> exporting to image"
 # Image size: ~500 MB
@@ -49,10 +49,10 @@ docker build -f docker\Dockerfile -t oxmaint-api .
 
 ```powershell
 # Start with MobileNetV3 (default - fast)
-docker run --rm -p 8000:8000 --name oxmaint-api oxmaint-api
+docker run --rm -p 8000:8000 --name predictive-agent-api predictive-agent-api
 
 # OR start with CLIP model (better accuracy)
-docker run --rm -p 8000:8000 -e RUST_MODEL_TYPE=clip --name oxmaint-api oxmaint-api
+docker run --rm -p 8000:8000 -e RUST_MODEL_TYPE=clip --name predictive-agent-api predictive-agent-api
 ```
 
 **Option B: Direct Python (Development)**
@@ -96,7 +96,7 @@ python serve_ui.py
 **Expected Output:**
 ```
 🌐 Serving UI at http://localhost:8080/ui/ui.html
-📁 Directory: C:\oxmaint-predictive-agent
+📁 Directory: C:\predictive-agent
 
 ✅ Open in browser: http://localhost:8080/ui/ui.html
 ⚠️  Make sure API is running at http://localhost:8000
@@ -189,10 +189,10 @@ Ctrl+C
 # Stop running container (Ctrl+C)
 
 # Rebuild Docker image
-docker build -t oxmaint-agent -f docker\Dockerfile .
+docker build -t predictive-agent -f docker\Dockerfile .
 
 # Start container again
-docker run --rm -p 8000:8000 --name oxmaint-agent oxmaint-agent
+docker run --rm -p 8000:8000 --name predictive-agent predictive-agent
 ```
 
 ### If you modified UI (ui.html):
@@ -233,7 +233,7 @@ Invoke-RestMethod -Uri "http://localhost:8000/predict/batch" `
 ```powershell
 # Find and stop the container
 docker ps
-docker stop oxmaint-agent
+docker stop predictive-agent
 
 # Or stop all containers
 docker stop $(docker ps -q)
@@ -263,12 +263,12 @@ Stop-Process -Id $pid -Force
 
 **Check API is running:**
 ```powershell
-docker ps | Select-String "oxmaint-agent"
+docker ps | Select-String "predictive-agent"
 ```
 
 **If not running, restart it:**
 ```powershell
-docker run --rm -p 8000:8000 --name oxmaint-agent oxmaint-agent
+docker run --rm -p 8000:8000 --name predictive-agent predictive-agent
 ```
 
 ---
@@ -318,7 +318,7 @@ Once everything works:
 
 - **Check Logs**: Look at Terminal 1 (API) and Terminal 2 (UI) for errors
 - **Browser Console**: Press F12 in browser, check Console tab
-- **Docker Logs**: `docker logs oxmaint-agent`
+- **Docker Logs**: `docker logs predictive-agent`
 - **Verify Ports**: `Get-NetTCPConnection -LocalPort 8000,8080`
 
 ---
@@ -329,14 +329,14 @@ Once everything works:
 
 **Terminal 1:**
 ```powershell
-cd C:\oxmaint-predictive-agent
-docker build -t oxmaint-agent -f docker\Dockerfile .
-docker run --rm -p 8000:8000 --name oxmaint-agent oxmaint-agent
+cd C:\predictive-agent
+docker build -t predictive-agent -f docker\Dockerfile .
+docker run --rm -p 8000:8000 --name predictive-agent predictive-agent
 ```
 
 **Terminal 2:**
 ```powershell
-cd C:\oxmaint-predictive-agent\ui
+cd C:\predictive-agent\ui
 python serve_ui.py
 ```
 

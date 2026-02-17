@@ -1,6 +1,6 @@
 # Dataset Manifest
 
-**Overview of all datasets used in the Oxmaint Predictive Agent.**
+**Overview of all datasets used in the Predictive Maintenance Agent.**
 
 ---
 
@@ -114,8 +114,8 @@ Risk multiplier calculation (0.5x - 2.0x adjustment to failure probability)
 ## Citation
 
 ```bibtex
-@misc{oxmaint_predictive_agent,
-  title={Oxmaint Predictive Maintenance Agent},
+@misc{predictive_maintenance_agent,
+  title={Predictive Maintenance Agent},
   year={2026},
   howpublished={GitHub Repository}
 }
